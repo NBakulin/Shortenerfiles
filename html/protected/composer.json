@@ -1,0 +1,13 @@
+{
+	"require":{
+		"php":">=5.3.0",
+		"silex/silex":"dev-master"
+	},
+	"autoload":{
+        "psr-4":{
+            "Providers//" : "",
+            "Controllers//" : "app/",
+	    "Views//" : "app/"
+        }
+    }
+}
