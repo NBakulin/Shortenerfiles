@@ -25,7 +25,7 @@ class Home implements ControllerProviderInterface {
                     /*CHECK EXISTANCE*/
                     $userTable->createUser($row);
                     $userTable->save();
-               /* echo json_encode( $userTable ->getRows(), JSON_PRETTY_PRINT);
+               /* echo json_encode( $userTable, JSON_PRETTY_PRINT);
 echo "1";*/
                /* echo json_encode( $userTable ->getRows(), JSON_PRETTY_PRINT);*/
                     $rowToWrite = $userTable ->getRows();

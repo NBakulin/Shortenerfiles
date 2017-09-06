@@ -28,8 +28,10 @@ class ShortenURLs implements ControllerProviderInterface {
                     return json_encode(-1);
                 $row = [$newRow["initialRef"], $newRow["title"]];
                 $refTable= $app['models']($app)->load('ReferenceModel');
-                $translator = $app['models']($app)->load('ReferenceShortener');
                 $refTable->load();
+                $translator = $app['models']($app)->load('ReferenceShortener');
+                echo json_encode($refTable, true);
+                //////////////////////////////////////
                 $row =  ["is generating", $user["userid"], $newRow["initialRef"], $translator->translate($refTable->getLastID()), $newRow["title"],  date_create('now')->format('Y\-m\-d\ h:i:s'), '0'];
                 $refTable->addRow($row);
                 $refTable->save();

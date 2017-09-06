@@ -12,21 +12,22 @@ class UserService extends Connector
 
     public function createUser(array $row)
     {
-        if (is_numeric($row[0])) {
-            $newRow = Array("userid" => $row[0], "email" => $row[1], "login" => $row[2], "name" => $row[3], "password" => password_hash( $row[4], PASSWORD_BCRYPT));
-            $this->userTable[$this->count] = $newRow;
-            $this->count++;
-        }
-        else echo "Неверный формат входных данных, выводим БД без изменений! \n";
+        $newRow = Array("userid" => $row[0], "email" => $row[1], "login" => $row[2], "name" => $row[3], "password" => password_hash( $row[4], PASSWORD_BCRYPT));
+        $this->userTable[$this->count] = Array(
+            "row" => $newRow,
+            "isAdded" => true,
+            "isEdited" => false,
+            "isDeleted"=>   false);
+        $this->count++;
     }
 
     public function getUserByLogin($login)
     {
         for ($i = 0; $i < $this->count; $i++)
         {
-            if ($this->userTable[$i]["login"] ==  $login)
+            if ($this->userTable[$i]['row']["login"] ==  $login)
             {
-                return $this->userTable[$i];
+                return $this->userTable[$i]['row'];
             }
         }
         return null;
@@ -36,10 +37,10 @@ class UserService extends Connector
     {
         for ($i = 0; $i < $this->count; $i++)
         {
-            if ($this->userTable[$i]->GetUserID() ==  $user->GetUserID())
+            if ($this->userTable[$i]['row']->GetUserID() ==  $user->GetUserID())
             {
-                $this->userTable[$i]->SetName($newName);
-                $this->userTable[$i]->SetMail($newEmail);
+                $this->userTable[$i]['row']->SetName($newName);
+                $this->userTable[$i]['row']->SetMail($newEmail);
             }
             else return null;
         }
@@ -57,7 +58,11 @@ class UserService extends Connector
             throw new Exception('Query result is null');
         }
         for ($i = 0; $row=$queryResult->fetch_array(MYSQLI_ASSOC); $i++) {
-            $this->userTable[$i] =  $row;
+            $this->userTable[$i] = Array(
+                "row"=>       $row,
+                "isAdded"=>   false,
+                "isEdited"=>   false,
+                "isDeleted"=>   false);
             $this->count++;
         }
     }
@@ -65,25 +70,26 @@ class UserService extends Connector
     public function getRows()
     {
         $tableWithValues = Array();
-        for ($i=0; $i < $this->count(); $i++)
-            $tableWithValues[$i] = $this->userTable[$i];
+        for ($i=0; $i < $this->count(); $i++){
+                        $tableWithValues[$i] = $this->userTable[$i]['row'];
+        }
         return $tableWithValues;
     }
-    /**
-     * @return void
-     */
-    public function save()
+
+    public  function save()
     {
-        $queryResult =  $this->connection->query("delete from user");
         for ($i=0; $i < $this->count(); $i++) {
-            $queryResult =  $this->connection->query("insert into user values 
-										      (null, '".
-                $this->userTable[$i]["email"].      "', '".
-                $this->userTable[$i]["login"].     "', '".
-                $this->userTable[$i]["name"].      "', '".
-                $this->userTable[$i]["password"].  "')");
+            if ($this->userTable[$i]["isAdded"] == true){
+                $this->connection->query("insert into user values 
+												(null, '".
+                    $this->userTable[$i]['row']['email'].        "', '".
+                    $this->userTable[$i]['row']['login'].        "', '".
+                    $this->userTable[$i]['row']['name'].         "', '".
+                    $this->userTable[$i]['row']['password'].     "')");
+              }
         }
     }
+
 
     public function getUserByBasicAuth()
     {

@@ -18,12 +18,15 @@ class RedirectController implements ControllerProviderInterface {
             try
             {
                 $refTable= $app['models']($app)->load('ReferenceModel');
+                $refTable->load();
                 $initialRef = $refTable ->FindInitialReference($hash);
-                if (!$initialRef) {
-                    header( 'Location: http://'.$_SERVER['HTTP_HOST'].'/Error404', true, 301 );
+                if (!$initialRef['initialRef']) {
+                    header( 'Location: http://'.$_SERVER['HTTP_HOST'].'/Error404', true, 404 );
                 }
                 else {
-                    header( 'Location: '.$initialRef, true, 301 );
+                    $refTable->updateRow($initialRef['refid']);
+                    $refTable->save();
+                    header( 'Location: '.$initialRef['initialRef'], true, 302 );
                 }
                 exit;
             }

@@ -5,9 +5,7 @@ class ReferenceModel extends Connector
     private $lastID = 0;
     private $count = 0;
     private $table = Array();
-    /*
-* @return array
-    */
+
     public function __construct() {
         parent::__construct();
     }
@@ -15,9 +13,7 @@ class ReferenceModel extends Connector
     {
         return  $this->lastID;
     }
-    /*
-     * @return void
-     */
+
     public  function load()
     {
         $queryResult = $this->connection->query("select * from ref");
@@ -38,6 +34,15 @@ class ReferenceModel extends Connector
     public  function save()
     {
         for ($i=0; $i < $this->count(); $i++) {
+            if ($this->table[$i]["isEdited"] == true){
+                $refid = $this->table[$i]['row']['refid'];
+                $this->connection->query("update ref 
+                                                set count = count + 1
+                                                where refid = $refid");
+            }
+        }
+
+        for ($i=0; $i < $this->count(); $i++) {
             if ($this->table[$i]["isAdded"] == true){
                 $this->connection->query("insert into ref values 
 												(null, '".
@@ -49,6 +54,7 @@ class ReferenceModel extends Connector
                     $this->table[$i]['row']['count'].	  "')");
             }
         }
+
         for ($i=0; $i < $this->count(); $i++) {
             if ($this->table[$i]["isDeleted"] == true){
                 $refid = $this->table[$i]['row']['refid'];
@@ -75,26 +81,15 @@ class ReferenceModel extends Connector
 
     }
 
-    public function updateRow($offset, array $row)    {
-        if (is_numeric($row[0]) && is_numeric($row[1]) && is_numeric($row[6]) && strtotime($row[5])) {
-            if ($offset >= 0 && $offset < $this->count){
-                $newRow = Array("refid" => $row[0], "userid" => $row[1], "initialRef" => $row[2], "shortedRef" => $row[3], "title" => $row[4], "date" => $row[5], "count" => $row[6]);
-                $this->table[$offset]["row"] = $newRow;
-                $this->table[$offset]["isAdded"] = false;
-                $this->table[$offset]["isEdited"] = true;
-                $this->table[$offset]["isDeleted"] = false;
-                return TRUE;
-            }         else {
-                echo "Индекс находится вне границ массива! Выводим БД без изменений... \n";
-                return FALSE;
+    public function updateRow($id) {
+        for ($i = 0; $i < $this->count();$i++)
+            if ($this->table[$i]['row']['refid'] == $id) {
+                $this->table[$i]["isEdited"] = true;
+                $this->table[$i]["row"]["count"]++;
+                break;
             }
-        }
-        else echo "Неверный формат входных данных, выводим БД без изменений! \n";
     }
-    /**
-     * @param int $offset
-     * @return array|null
-     */
+
     public function getRow($offset)
     {
         if ($offset >= 0 && $offset < $this->count){
@@ -116,10 +111,6 @@ class ReferenceModel extends Connector
         return $rowsToShow;
     }
 
-    /**
-     * @param $offset integer
-     * @return boolean
-     */
     public function deleteRow($offset)
     {
         if ($offset >= 0 && $offset < $this->count){
@@ -155,16 +146,13 @@ class ReferenceModel extends Connector
     }
 
 
-    public function FindInitialReference($shortedRef) {
-        $queryResult = $this->connection->query("select initialRef
-										         from ref
-										         where shortedRef==$shortedRef");
-        return $queryResult->fetch_array()['initialRef'];
+    public function FindInitialReference($shortedRef)
+    {
+        for ($i = 0; $i < $this->count(); $i++) {
+            if ($this->table[$i]['row']['shortedRef'] == $shortedRef) {
+                return $this->table[$i]['row'];
+            }
+        }
+        return null;
     }
-    /*public function CreateShortenRef($initialRef) {
-        $this->connection->query("select shortedRef
-										         from ref
-										         where initialRef==$initialRef");
-    }*/
 }
-?>

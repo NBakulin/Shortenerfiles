@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b022d982e14f48b3f3af7ba4f1af486a",
-    "content-hash": "45fdaa2ace03789ffd154bf73953d616",
+    "hash": "797556085d930d8c2330b4b23d5ecc45",
+    "content-hash": "4aa9fe95534c0367c4b14c29a827330b",
     "packages": [
         {
             "name": "pimple/pimple",
@@ -155,16 +155,16 @@
         },
         {
             "name": "silex/silex",
-            "version": "dev-master",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/silexphp/Silex.git",
-                "reference": "5c3ca119e0aec50092ad62ee931b17b11a695419"
+                "reference": "ec7d5b5334465414952d4b2e935e73bd085dbbbb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silexphp/Silex/zipball/5c3ca119e0aec50092ad62ee931b17b11a695419",
-                "reference": "5c3ca119e0aec50092ad62ee931b17b11a695419",
+                "url": "https://api.github.com/repos/silexphp/Silex/zipball/ec7d5b5334465414952d4b2e935e73bd085dbbbb",
+                "reference": "ec7d5b5334465414952d4b2e935e73bd085dbbbb",
                 "shasum": ""
             },
             "require": {
@@ -240,7 +240,7 @@
             "keywords": [
                 "microframework"
             ],
-            "time": "2017-08-22 23:18:13"
+            "time": "2017-07-23 07:40:14"
         },
         {
             "name": "symfony/debug",
@@ -641,9 +641,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "silex/silex": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

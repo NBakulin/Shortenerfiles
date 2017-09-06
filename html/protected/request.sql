@@ -5,8 +5,8 @@ use refDB;
 create table user (
 	userid int unsigned not null auto_increment primary key,
 	email varchar(100) not null,
-	firstName varchar(50) not null,
-	lastName varchar(50) not null,
+	login varchar(50) not null,
+	name varchar(50) not null,
 	password char(40) not null
 );
 create table ref (
@@ -15,8 +15,13 @@ create table ref (
 	initialRef varchar(2048) not null,
 	shortedRef varchar(100) not null,
 	title varchar(256),
-	date date not null,
+	date timestamp not null,
 	count int unsigned
+);
+create table refDates (
+	redirectid int unsigned not null auto_increment primary key,
+	date timestamp not null,
+	refid int unsigned
 );
 grant select, insert, update, delete
 on ref.*
