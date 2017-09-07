@@ -26,6 +26,10 @@ class RedirectController implements ControllerProviderInterface {
                 else {
                     $refTable->updateRow($initialRef['refid']);
                     $refTable->save();
+                    $redirectTable= $app['models']($app)->load('RedirectCounter');
+                    $redirectTable ->load();
+                    $redirectTable ->createRedirectDate($initialRef['refid']);
+                    $redirectTable ->save();
                     header( 'Location: '.$initialRef['initialRef'], true, 302 );
                 }
                 exit;
