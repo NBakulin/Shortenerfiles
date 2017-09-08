@@ -16,26 +16,43 @@ class RedirectCounter extends Connector
         $this->count++;
     }
 
-    public function groupByDays($from_date, $to_date)
+    public function groupByMinutes($from_date, $to_date, $refid)
     {
         $returnDates = Array();
-        //$from_date = date_create($from_date);
-        //$to_date = date_create($to_date);
-        $queryResult = $this->connection->query("select date, count(date)
-                                         from refDates
-                                         where refid=2 and date>$from_date and date<$to_date
-                                         group by minute(date)");
-        for ($i = 0; $row=$queryResult->fetch_array(MYSQLI_ASSOC); $i++) {
-            $this->$returnDates[$i] =  $row;
+        $from_date .= ' 00:00:00';  $to_date .= ' 23:59:59';
+        $queryResult = $this->connection->query("select date_format(date, \"%Y-%m-%d %H:%i\"), count(date) 
+                                                        from refDates where refid=$refid and date> '$from_date' and date< '$to_date' 
+                                                        group by date_format(date, \"%Y%m%d%H%i\");");
+        for ($i = 0; $row=$queryResult->fetch_array(MYSQLI_NUM); $i++) {
+            $returnDates[$i] = ["Date" => $row[0], "Count" =>  $row[1]];;
         }
         return $returnDates;
+    }
 
-            /*if (var_dump($this->redirectTable[i]["row"]["date"] >= $datefirst && $this->redirectTable[i]["row"]["date"] <= $datesecond))
-                {
-                    $interval = $datetime1->diff($datetime2);
-                }*/
+    public function groupByHours($from_date, $to_date, $refid)
+    {
+        $returnDates = Array();
+        $from_date .= ' 00:00:00';  $to_date .= ' 23:59:59';
+        $queryResult = $this->connection->query("select date_format(date, \"%Y-%m-%d %H\"), count(date) 
+                                                        from refDates where refid=$refid and date> '$from_date' and date< '$to_date' 
+                                                        group by date_format(date, \"%Y%m%d%H\");");
+        for ($i = 0; $row=$queryResult->fetch_array(MYSQLI_NUM); $i++) {
+            $returnDates[$i] = ["Date" => $row[0], "Count" =>  $row[1]];;
+        }
+        return $returnDates;
+    }
 
-
+    public function groupByDays($from_date, $to_date, $refid)
+    {
+        $returnDates = Array();
+        $from_date .= ' 00:00:00';  $to_date .= ' 23:59:59';
+        $queryResult = $this->connection->query("select date_format(date, \"%Y-%m-%d\"), count(date) 
+                                                        from refDates where refid=$refid and date> '$from_date' and date< '$to_date' 
+                                                        group by date_format(date, \"%Y%m%d\");");
+        for ($i = 0; $row=$queryResult->fetch_array(MYSQLI_NUM); $i++) {
+            $returnDates[$i] = ["Date" => $row[0], "Count" =>  $row[1]];;
+        }
+        return $returnDates;
     }
 
     public function getRedirectDate($login)
