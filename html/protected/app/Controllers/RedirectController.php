@@ -15,6 +15,7 @@ class RedirectController implements ControllerProviderInterface {
 
 
         $index->get('/{hash}', function ($hash) use ($app){
+            //$leftReference = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             try
             {
                 $refTable= $app['models']($app)->load('ReferenceModel');
@@ -28,7 +29,8 @@ class RedirectController implements ControllerProviderInterface {
                     $refTable->save();
                     $redirectTable= $app['models']($app)->load('RedirectCounter');
                     $redirectTable ->load();
-                    $redirectTable ->createRedirectDate($initialRef['refid']);
+                    $leftReference = $_SERVER['HTTP_REFERER'];
+                    $redirectTable ->createRedirectDate($initialRef['refid'], $leftReference);
                     $redirectTable ->save();
                     header( 'Location: '.$initialRef['initialRef'], true, 302 );
                 }

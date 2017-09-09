@@ -57,7 +57,7 @@ class RedirectCounter extends ConnectorModel
 
     public function getTop20()
     {
-                $queryResult = $this->connection->query("select date_format(date, \"%Y-%m-%d\"), count(date) 
+        $queryResult = $this->connection->query("select date_format(date, \"%Y-%m-%d\"), count(date) 
                                                         from ref where refid=$refid and date> '$from_date' and date< '$to_date' 
                                                         group by date_format(date, \"%Y%m%d\");");
         for ($i = 0; $row=$queryResult->fetch_array(MYSQLI_NUM); $i++) {
@@ -109,7 +109,7 @@ class RedirectCounter extends ConnectorModel
     {
         for ($i=0; $i < $this->count(); $i++) {
             if ($this->redirectTable[$i]["isAdded"] == true){
-                    $this->connection->query("insert into refDates values 
+                $this->connection->query("insert into refDates values 
 					(null,                                              '".
                     $this->redirectTable[$i]['row']['leftReference']."', '".
                     $this->redirectTable[$i]['row']['date']         ."', '".

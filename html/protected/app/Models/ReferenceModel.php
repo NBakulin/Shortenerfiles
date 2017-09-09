@@ -1,6 +1,5 @@
 <?php
-require_once('Connector.php');
-class ReferenceModel extends Connector
+class ReferenceModel extends ReferenceRepository
 {
     private $lastID = 0;
     private $count = 0;
@@ -14,7 +13,7 @@ class ReferenceModel extends Connector
         return  $this->lastID;
     }
 
-    public  function load()
+   /* public  function load()
     {
         $queryResult = $this->connection->query("select * from ref");
         if (!$queryResult) {
@@ -29,9 +28,9 @@ class ReferenceModel extends Connector
             $this->count++;
         }
         $this->lastID = $this->count();
-    }
+    }*/
 
-    public  function save()
+    /*public  function save()
     {
         for ($i=0; $i < $this->count(); $i++) {
             if ($this->table[$i]["isEdited"] == true){
@@ -64,7 +63,7 @@ class ReferenceModel extends Connector
                 $this->count--;
             }
         }
-    }
+    }*/
 
     public function addRow(array $row)
     {

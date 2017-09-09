@@ -1,6 +1,5 @@
 <?php
-require_once('ConnectorModel.php');
-class RedirectCounter extends ConnectorModel
+class RedirectCounterModel extends RedirectRepository
 {
     private $count= 0;
     private $redirectTable = Array();
@@ -82,7 +81,7 @@ class RedirectCounter extends ConnectorModel
         return $this->count;
     }
 
-    public  function load()
+  /*  public  function load()
     {
         $queryResult =  $this->connection->query("select * from refDates");
         if (!$queryResult) {
@@ -94,7 +93,7 @@ class RedirectCounter extends ConnectorModel
                 "isAdded"=>   false);
             $this->count++;
         }
-    }
+    }*/
 
     public function getRows()
     {
@@ -105,7 +104,7 @@ class RedirectCounter extends ConnectorModel
         return $tableWithValues;
     }
 
-    public  function save()
+   /* public  function save()
     {
         for ($i=0; $i < $this->count(); $i++) {
             if ($this->redirectTable[$i]["isAdded"] == true){
@@ -116,6 +115,6 @@ class RedirectCounter extends ConnectorModel
                     $this->redirectTable[$i]['row']['refid']        ."')");
             }
         }
-    }
+    }*/
 
 }

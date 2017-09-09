@@ -15,7 +15,7 @@ class ReportController implements ControllerProviderInterface {
 
         $index->get('/shorten_urls/{id}/minutes', function ($id) use ($app){
             $from_date = $_GET['from_date']; $to_date = $_GET['to_date'];
-            $redirectTable= $app['models']($app)->load('RedirectCounter');
+            $redirectTable= $app['models']($app)->load('RedirectCounterModel');
             $redirectTable ->load();
             $rowToWrite = $redirectTable->groupByMinutes($from_date, $to_date, $id);
             return $app['views']($app)->render('Home', 'getRow', ['rowToWrite'=>$rowToWrite]);
@@ -24,7 +24,7 @@ class ReportController implements ControllerProviderInterface {
 
         $index->get('/shorten_urls/{id}/hours', function ($id) use ($app){
             $from_date = $_GET['from_date']; $to_date = $_GET['to_date'];
-            $redirectTable= $app['models']($app)->load('RedirectCounter');
+            $redirectTable= $app['models']($app)->load('RedirectCounterModel');
             $redirectTable ->load();
             $rowToWrite = $redirectTable->groupByHours($from_date, $to_date, $id);
             return $app['views']($app)->render('Home', 'getRow', ['rowToWrite'=>$rowToWrite]);
@@ -34,7 +34,7 @@ class ReportController implements ControllerProviderInterface {
 
         $index->get('/shorten_urls/{id}/days', function ($id) use ($app){
             $from_date = $_GET['from_date']; $to_date = $_GET['to_date'];
-            $redirectTable= $app['models']($app)->load('RedirectCounter');
+            $redirectTable= $app['models']($app)->load('RedirectCounterModel');
             $redirectTable ->load();
             $rowToWrite = $redirectTable->groupByDays($from_date, $to_date, $id);
             return $app['views']($app)->render('Home', 'getRow', ['rowToWrite'=>$rowToWrite]);

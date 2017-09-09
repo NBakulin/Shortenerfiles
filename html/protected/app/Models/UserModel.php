@@ -1,13 +1,14 @@
 <?php
-require_once('ConnectorModel.php');
-class UserService extends ConnectorModel
+namespace Models;
+//use Repository\UserRepository;
+class UserModel// extends UserRepository
 {
     private $count= 0;
     private $userTable = Array();
 
 
-    public function __construct() {
-        parent::__construct();
+   public function __construct($table) {
+        $this->userTable = $table;
     }
 
     public function createUser(array $row)
@@ -51,7 +52,7 @@ class UserService extends ConnectorModel
         return $this->count;
     }
 
-    public  function load()
+   /* public  function load()
     {
         $queryResult =  $this->connection->query("select * from user");
         if (!$queryResult) {
@@ -65,7 +66,7 @@ class UserService extends ConnectorModel
                 "isDeleted"=>   false);
             $this->count++;
         }
-    }
+    }*/
 
     public function getRows()
     {
@@ -76,7 +77,7 @@ class UserService extends ConnectorModel
         return $tableWithValues;
     }
 
-    public  function save()
+  /*  public  function save()
     {
         for ($i=0; $i < $this->count(); $i++) {
             if ($this->userTable[$i]["isAdded"] == true){
@@ -88,7 +89,7 @@ class UserService extends ConnectorModel
                     $this->userTable[$i]['row']['password'].     "')");
               }
         }
-    }
+    }*/
 
 
     public function getUserByBasicAuth()

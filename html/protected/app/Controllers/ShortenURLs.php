@@ -19,7 +19,7 @@ class ShortenURLs implements ControllerProviderInterface {
                 echo 'Для добавления ссылки нужно авторизоваться!';
                 exit;
             } else {
-                $userTable= $app['models']($app)->load('UserService');
+                $userTable= $app['models']($app)->load('UserModele');
                 $userTable->load();
                 $user = $userTable->getUserByBasicAuth();
                 $content = file_get_contents('php://input');
@@ -29,8 +29,7 @@ class ShortenURLs implements ControllerProviderInterface {
                 $row = [$newRow["initialRef"], $newRow["title"]];
                 $refTable= $app['models']($app)->load('ReferenceModel');
                 $refTable->load();
-                $translator = $app['models']($app)->load('ReferenceShortener');
-                echo json_encode($refTable, true);
+                $translator = $app['models']($app)->load('ShortenerModel');
                 $row =  ["is generating", $user["userid"], $newRow["initialRef"], $translator->translate($refTable->getLastID()), $newRow["title"],  date_create('now')->format('Y\-m\-d\ h:i:s'), '0'];
                 $refTable->addRow($row);
                 $refTable->save();
@@ -49,7 +48,7 @@ class ShortenURLs implements ControllerProviderInterface {
             } else {
                 $refTable = $app['models']($app)->load('ReferenceModel');
                 $refTable->load();
-                $userTable= $app['models']($app)->load('UserService');
+                $userTable= $app['models']($app)->load('UserModel');
                 $userTable->load();
                 $user = $userTable->getUserByBasicAuth();
                 //$refTable->showUsersReferences($user);

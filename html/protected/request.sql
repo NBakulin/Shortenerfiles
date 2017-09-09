@@ -7,7 +7,7 @@ create table user (
 	email varchar(100) not null,
 	login varchar(50) not null,
 	name varchar(50) not null,
-	password char(40) not null
+	password char(60) not null
 );
 create table ref (
 	refid int unsigned not null auto_increment primary key,
@@ -20,6 +20,7 @@ create table ref (
 );
 create table refDates (
 	redirectid int unsigned not null auto_increment primary key,
+	leftReference varchar(2048) not null,
 	date timestamp not null,
 	refid int unsigned
 );
