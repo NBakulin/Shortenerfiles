@@ -103,7 +103,7 @@ class UserModel// extends UserRepository
     {
         $username = $_SERVER['PHP_AUTH_USER'];
         $password = $_SERVER['PHP_AUTH_PW'];
-        $user = UserService::getUserByLogin($username);
+        $user = UserModel::getUserByLogin($username);
         $hash = password_verify($password, $user['password']);
         if ($user != null && $user["password"] == $hash) {
             return $user;
@@ -111,5 +111,12 @@ class UserModel// extends UserRepository
             return null;
         }
     }
-
+    public function CheckExistance($row)
+    {
+        for ($i=0; $i < $this->count(); $i++){
+          if ( $this->userTable[$i]["row"]["login"] = $row["login"])
+              return false;
+        }
+        return true;
+    }
     }

@@ -24,13 +24,11 @@ class Home implements ControllerProviderInterface {
                         return json_encode(-1);
                     $row = [null,$newRow["email"],$newRow["login"],$newRow["name"],$newRow["password"]];
                     /*CHECK EXISTANCE*/
+                    $userTable->CheckExistance($row);
                     $userTable = new UserModel($repository->GetArray(), $repository->count());
                     $userTable->createUser($row);
                     $repository->save($userTable->getArray(), $userTable->count());
 
-               /* echo json_encode( $userTable, JSON_PRETTY_PRINT);
-echo "1";*/
-               /* echo json_encode( $userTable ->getRows(), JSON_PRETTY_PRINT);*/
                     $rowToWrite = $userTable ->getRows();
                     return $app['views']($app)->render('Home', 'getRow', ['rowToWrite'=>$rowToWrite]);
              })
@@ -39,13 +37,12 @@ echo "1";*/
 
         $index->get('/me', function () use ($app){
             if (!isset($_SERVER['PHP_AUTH_USER'])) {
-                echo 'Текст, отправляемый в том случае,
-                если пользователь нажал кнопку Cancel';
-               /* return $app['views']($app)->render('Home', 'getRow', ['rowToWrite'=>$rowToWrite]);*/
+                echo 'Введены неправильные логин и/или пароль.';
                 exit;
             } else {
-                $userTable= $app['models']($app)->load('UserModel');
-                $userTable->load();
+                $repository = new UserRepository();
+                $repository->load();
+                $userTable = new UserModel($repository->GetArray(), $repository->count());
                 $user = $userTable->getUserByBasicAuth();
                 return $app['views']($app)->render('Home', 'ShowUserAuth', ['user'=>$user]);
             }

@@ -11,7 +11,7 @@ class UserRepository extends BaseRepository
         parent::__construct();
     }
 
-       public  function load()
+       private  function load()
     {
         $queryResult =  $this->connection->query("select * from user");
         if (!$queryResult) {
@@ -27,9 +27,8 @@ class UserRepository extends BaseRepository
         }
     }
 
-    public  function save($userTable, $count)
+    private  function save($userTable, $count)
     {
-        echo json_encode($userTable, JSON_PRETTY_PRINT);
         for ($i=0; $i < $count; $i++) {
             if ($userTable[$i]["isAdded"] == true){
                 $this->connection->query("insert into user values 
