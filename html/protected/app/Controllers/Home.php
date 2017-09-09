@@ -17,18 +17,16 @@ class Home implements ControllerProviderInterface {
 
 		    $index->post('', function () use ($app){
                     $repository = new UserRepository();
+                    $repository->load();
                     $content = file_get_contents('php://input');
                     $newRow = json_decode($content, true);
                     if (!isset($newRow["email"],$newRow["login"],$newRow["name"],$newRow["password"]))
                         return json_encode(-1);
                     $row = [null,$newRow["email"],$newRow["login"],$newRow["name"],$newRow["password"]];
-                    echo json_encode($row, JSON_PRETTY_PRINT);
                     /*CHECK EXISTANCE*/
-                    $userTable = new UserModel($repository->load());
-                     echo json_encode($userTable, JSON_PRETTY_PRINT);
-
-
-                    $repository->save($userTable);
+                    $userTable = new UserModel($repository->GetArray(), $repository->count());
+                    $userTable->createUser($row);
+                    $repository->save($userTable->getArray(), $userTable->count());
 
                /* echo json_encode( $userTable, JSON_PRETTY_PRINT);
 echo "1";*/

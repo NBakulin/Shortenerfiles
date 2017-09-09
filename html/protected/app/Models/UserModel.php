@@ -7,8 +7,9 @@ class UserModel// extends UserRepository
     private $userTable = Array();
 
 
-   public function __construct($table) {
-        $this->userTable = $table;
+   public function __construct($table, $counter) {
+        $this->count = $counter;
+       $this->userTable = $table;
     }
 
     public function createUser(array $row)
@@ -75,6 +76,12 @@ class UserModel// extends UserRepository
                         $tableWithValues[$i] = $this->userTable[$i]['row'];
         }
         return $tableWithValues;
+    }
+
+
+    public function getArray()
+    {
+        return  $this->userTable;
     }
 
   /*  public  function save()

@@ -27,10 +27,10 @@ class UserRepository extends BaseRepository
         }
     }
 
-    public  function save($userTable)
+    public  function save($userTable, $count)
     {
         echo json_encode($userTable, JSON_PRETTY_PRINT);
-        for ($i=0; $i < $this->count; $i++) {
+        for ($i=0; $i < $count; $i++) {
             if ($userTable[$i]["isAdded"] == true){
                 $this->connection->query("insert into user values 
 												(null, '".
@@ -40,6 +40,16 @@ class UserRepository extends BaseRepository
                     $userTable[$i]['row']['password'].     "')");
             }
         }
+    }
+
+    public  function count()
+    {
+        return $this->count;
+    }
+
+    public  function GetArray()
+    {
+        return $this->userTable;
     }
 
 }
