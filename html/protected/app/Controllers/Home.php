@@ -23,14 +23,18 @@ class Home implements ControllerProviderInterface {
                     if (!isset($newRow["email"],$newRow["login"],$newRow["name"],$newRow["password"]))
                         return json_encode(-1);
                     $row = [null,$newRow["email"],$newRow["login"],$newRow["name"],$newRow["password"]];
-                    /*CHECK EXISTANCE*/
-                    $userTable->CheckExistance($row);
                     $userTable = new UserModel($repository->GetArray(), $repository->count());
-                    $userTable->createUser($row);
-                    $repository->save($userTable->getArray(), $userTable->count());
+                    if ($userTable->CheckExistance($row))
+                    {
+                        $userTable->createUser($row);
+                        $repository->save($userTable->getArray(), $userTable->count());
+                        $rowToWrite = $userTable ->getRows();
+                        return $app['views']($app)->render('Home', 'getRow', ['rowToWrite'=>$rowToWrite]);
+                    }
+                    else{
+                        echo "Данный пользователь уже существует!";
+                    }
 
-                    $rowToWrite = $userTable ->getRows();
-                    return $app['views']($app)->render('Home', 'getRow', ['rowToWrite'=>$rowToWrite]);
              })
             ->method('POST');
 
