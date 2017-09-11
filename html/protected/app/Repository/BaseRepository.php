@@ -8,7 +8,7 @@ abstract Class BaseRepository
         $this->connection = $this->getConnection();
     }
 
-    protected function getConnection()
+    protected function GetConnection()
     {
         $connection = new \mysqli('localhost', 'root', 'root', 'refDB');
         if ($connection->connect_error) {

@@ -1,6 +1,6 @@
 <?php
 namespace Models;
-class ReferenceModel
+class ReferenceService
 {
     private $lastID = 0;
     private $count = 0;
@@ -11,7 +11,7 @@ class ReferenceModel
         $this->table = $table;
         $this->lastID = $lastID;
     }
-    public function getLastID()
+    public function GetLastID()
     {
         return  $this->lastID;
     }
@@ -21,18 +21,14 @@ class ReferenceModel
         return $this->table;
     }
 
-    public function addRow(array $row)
+   public function AddRow(array $row)
     {
             $newRow = Array("refid" => $row[0], "userid" => $row[1], "initialRef" => $row[2], "shortedRef" => $row[3], "title" => $row[4], "date" => $row[5], "count" => $row[6]);
-            $this->table[$this->count] = Array(
-                "row" => $newRow,
-                "isAdded" => true,
-                "isEdited" => false,
-                "isDeleted"=>   false);
+            $this->table[$this->count] = Array( "row" => $newRow, "isAdded" => true, "isEdited" => false, "isDeleted"=> false);
             $this->count++;
     }
 
-    public function updateRow($id) {
+    public function UpdateRow($id) {
         for ($i = 0; $i < $this->count();$i++)
             if ($this->table[$i]['row']['refid'] == $id) {
                 $this->table[$i]["isEdited"] = true;
@@ -41,7 +37,7 @@ class ReferenceModel
             }
     }
 
-    public function getRow($offset, $user)
+    public function GetRow($offset, $user)
     {
         for ($i=0; $i < $this->count(); $i++)
             if ( $this->table[$i]['row']['refid'] == $offset && $this->table[$i]['row']['userid'] == $user["userid"])
@@ -50,7 +46,7 @@ class ReferenceModel
             exit;
     }
 
-    public function showUsersReferences($user)
+    public function ShowUsersReferences($user)
     {
         $index = 0;
         $rowsToShow = Array();
@@ -60,35 +56,25 @@ class ReferenceModel
         return $rowsToShow;
     }
 
-    public function deleteRow($offset, $user)
+    public function DeleteRow($offset, $user)
     {
-        echo $this->table[58]["row"]["isDeleted"];
         for ($i=0; $i < $this->count(); $i++)
-             if ( $this->table[$i]['row']['refid'] == $offset && $this->table[$i]['row']['userid'] == $user["userid"]) {
-                echo $this->table[$i]["row"]["isDeleted"] = true;
+            if ( $this->table[$i]['row']['refid'] == $offset && $this->table[$i]['row']['userid'] == $user["userid"]) {
+                $this->table[$i]["isDeleted"] = true;
                 return true;
             }
-            else
-                return false;
+        return false;
     }
 
-
-
-    /**
-     * @return array
-     */
-    public function getRows()
+    public function GetRows()
     {
         $tableWithValues = Array();
         for ($i=0; $i < $this->count(); $i++)
             $tableWithValues[$i] = $this->table[$i]["row"];
         return $tableWithValues;
     }
-    /**
-     * @return int
-     */
 
-    public function count() {
+    public function Count() {
         return $this->count;
     }
 

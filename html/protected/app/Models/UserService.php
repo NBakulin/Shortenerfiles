@@ -1,27 +1,24 @@
 <?php
-require_once('ConnectorModel.php');
-class UserService extends ConnectorModel
+namespace Models;
+class UserService
 {
     private $count= 0;
     private $userTable = Array();
 
 
-    public function __construct() {
-        parent::__construct();
+   public function __construct($table, $counter) {
+        $this->count = $counter;
+       $this->userTable = $table;
     }
 
-    public function createUser(array $row)
+    public function CreateUser(array $row)
     {
-        $newRow = Array("userid" => $row[0], "email" => $row[1], "login" => $row[2], "name" => $row[3], "password" => password_hash( $row[4], PASSWORD_BCRYPT));
-        $this->userTable[$this->count] = Array(
-            "row" => $newRow,
-            "isAdded" => true,
-            "isEdited" => false,
-            "isDeleted"=>   false);
+        $newUser = Array("userid" => null, "email" => $row["email"], "login" => $row["login"], "name" => $row["name"], "password" => password_hash( $row["password"], PASSWORD_BCRYPT));
+        $this->userTable[$this->count] = Array( "row" => $newUser, "isAdded" => true, "isEdited" => false, "isDeleted"=>   false);
         $this->count++;
     }
 
-    public function getUserByLogin($login)
+    public function GetUserByLogin($login)
     {
         for ($i = 0; $i < $this->count; $i++)
         {
@@ -33,41 +30,11 @@ class UserService extends ConnectorModel
         return null;
     }
 
-    public function updateUser(User $user, $newEmail, $newName)
-    {
-        for ($i = 0; $i < $this->count; $i++)
-        {
-            if ($this->userTable[$i]['row']->GetUserID() ==  $user->GetUserID())
-            {
-                $this->userTable[$i]['row']->SetName($newName);
-                $this->userTable[$i]['row']->SetMail($newEmail);
-            }
-            else return null;
-        }
-        return $user;
-
-    }
-    public function count() {
+    public function Count() {
         return $this->count;
     }
 
-    public  function load()
-    {
-        $queryResult =  $this->connection->query("select * from user");
-        if (!$queryResult) {
-            throw new Exception('Query result is null');
-        }
-        for ($i = 0; $row=$queryResult->fetch_array(MYSQLI_ASSOC); $i++) {
-            $this->userTable[$i] = Array(
-                "row"=>       $row,
-                "isAdded"=>   false,
-                "isEdited"=>   false,
-                "isDeleted"=>   false);
-            $this->count++;
-        }
-    }
-
-    public function getRows()
+    public function GetRows()
     {
         $tableWithValues = Array();
         for ($i=0; $i < $this->count(); $i++){
@@ -76,32 +43,37 @@ class UserService extends ConnectorModel
         return $tableWithValues;
     }
 
-    public  function save()
+
+    public function GetArray()
     {
-        for ($i=0; $i < $this->count(); $i++) {
-            if ($this->userTable[$i]["isAdded"] == true){
-                $this->connection->query("insert into user values 
-												(null, '".
-                    $this->userTable[$i]['row']['email'].        "', '".
-                    $this->userTable[$i]['row']['login'].        "', '".
-                    $this->userTable[$i]['row']['name'].         "', '".
-                    $this->userTable[$i]['row']['password'].     "')");
-              }
-        }
+        return  $this->userTable;
     }
 
-
-    public function getUserByBasicAuth()
+    public function GetUserByBasicAuth()
     {
-        $username = $_SERVER['PHP_AUTH_USER'];
-        $password = $_SERVER['PHP_AUTH_PW'];
-        $user = UserService::getUserByLogin($username);
-        $hash = password_verify($password, $user['password']);
-        if ($user != null && $user["password"] == $hash) {
-            return $user;
-        } else {
-            return null;
+        if (isset($_SERVER['PHP_AUTH_USER'])) {
+            $username = $_SERVER['PHP_AUTH_USER'];
+            $password = $_SERVER['PHP_AUTH_PW'];
+            $user = UserService::getUserByLogin($username);
+            $hash = password_verify($password, $user['password']);
+            if ($user != null && $user["password"] == $hash) {
+                return $user;
+            } else {
+                return null;
+            }
+        }
+        else {
+            echo "Заполнитя поля логин и/или пароль!";
+            exit;
         }
     }
+        public function CheckExistance($login, $email)
+        {
+            for ($i=0; $i < $this->count(); $i++) {
+                if ($this->userTable[$i]['row']["login"] === $login || $this->userTable[$i]['row']["email"] === $email)
+                    return true;
+            }
+                return false;
 
+        }
     }

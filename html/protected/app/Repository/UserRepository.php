@@ -1,6 +1,5 @@
 <?php
 namespace Repository;
-require_once('BaseRepository.php');
 class UserRepository extends BaseRepository
 {
     private $count= 0;
@@ -9,10 +8,6 @@ class UserRepository extends BaseRepository
 
     public function __construct() {
         parent::__construct();
-    }
-
-       private  function load()
-    {
         $queryResult =  $this->connection->query("select * from user");
         if (!$queryResult) {
             throw new Exception('Query result is null');
@@ -27,7 +22,8 @@ class UserRepository extends BaseRepository
         }
     }
 
-    private  function save($userTable, $count)
+
+    public  function save($userTable, $count)
     {
         for ($i=0; $i < $count; $i++) {
             if ($userTable[$i]["isAdded"] == true){

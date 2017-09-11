@@ -35,7 +35,7 @@ class UserModel// extends UserRepository
         return null;
     }
 
-    public function updateUser(User $user, $newEmail, $newName)
+   /* public function updateUser(User $user, $newEmail, $newName)
     {
         for ($i = 0; $i < $this->count; $i++)
         {
@@ -48,26 +48,10 @@ class UserModel// extends UserRepository
         }
         return $user;
 
-    }
+    }*/
     public function count() {
         return $this->count;
     }
-
-   /* public  function load()
-    {
-        $queryResult =  $this->connection->query("select * from user");
-        if (!$queryResult) {
-            throw new Exception('Query result is null');
-        }
-        for ($i = 0; $row=$queryResult->fetch_array(MYSQLI_ASSOC); $i++) {
-            $this->userTable[$i] = Array(
-                "row"=>       $row,
-                "isAdded"=>   false,
-                "isEdited"=>   false,
-                "isDeleted"=>   false);
-            $this->count++;
-        }
-    }*/
 
     public function getRows()
     {
@@ -84,21 +68,6 @@ class UserModel// extends UserRepository
         return  $this->userTable;
     }
 
-  /*  public  function save()
-    {
-        for ($i=0; $i < $this->count(); $i++) {
-            if ($this->userTable[$i]["isAdded"] == true){
-                $this->connection->query("insert into user values 
-												(null, '".
-                    $this->userTable[$i]['row']['email'].        "', '".
-                    $this->userTable[$i]['row']['login'].        "', '".
-                    $this->userTable[$i]['row']['name'].         "', '".
-                    $this->userTable[$i]['row']['password'].     "')");
-              }
-        }
-    }*/
-
-
     public function getUserByBasicAuth()
     {
         $username = $_SERVER['PHP_AUTH_USER'];
@@ -111,12 +80,13 @@ class UserModel// extends UserRepository
             return null;
         }
     }
-    public function CheckExistance($row)
-    {
-        for ($i=0; $i < $this->count(); $i++){
-          if ( $this->userTable[$i]["row"]["login"] = $row["login"])
-              return false;
+        public function CheckExistance($login)
+        {
+            for ($i=0; $i < $this->count(); $i++) {
+                if ($this->userTable[$i]['row']["login"] === $login)
+                    return false;
+            }
+                return true;
+
         }
-        return true;
-    }
     }

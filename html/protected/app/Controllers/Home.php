@@ -8,47 +8,52 @@ use Silex\Api\ControllerProviderInterface;
 use Silex\ControllerCollection;
 use Symfony\Request;
 use Repository\UserRepository;
-use Models\UserModel;
+use Models\UserService;
 class Home implements ControllerProviderInterface {
 	
 	public function connect(Application $app) {
 		    $index = new ControllerCollection(new Route());
 
 
-		    $index->post('', function () use ($app){
-                    $repository = new UserRepository();
-                    $repository->load();
-                    $content = file_get_contents('php://input');
-                    $newRow = json_decode($content, true);
-                    if (!isset($newRow["email"],$newRow["login"],$newRow["name"],$newRow["password"]))
-                        return json_encode(-1);
-                    $row = [null,$newRow["email"],$newRow["login"],$newRow["name"],$newRow["password"]];
-                    $userTable = new UserModel($repository->GetArray(), $repository->count());
-                    if ($userTable->CheckExistance($row))
-                    {
-                        $userTable->createUser($row);
-                        $repository->save($userTable->getArray(), $userTable->count());
-                        $rowToWrite = $userTable ->getRows();
-                        return $app['views']($app)->render('Home', 'getRow', ['rowToWrite'=>$rowToWrite]);
+		    $index->post('/users', function () use ($app){
+                $userRepository= new UserRepository();
+                $requestContent = json_decode( file_get_contents('php://input'), true);
+                if ( $requestContent["name"]==''||$requestContent["email"]==''||$requestContent["login"]==''||$requestContent["password"]==''){
+                    echo "Пользователь должен быть представлен в json формате (email, login, name, password).";
+                    exit;
+                }
+                else {
+                    $userTable = new UserService($userRepository->GetArray(), $userRepository->count());
+                    if ($userTable->CheckExistance($requestContent["login"], $requestContent["email"]) === false) {
+                        $userTable->CreateUser($requestContent);
+                        $userRepository->Save($userTable->GetArray(), $userTable->Count());
+                        echo "Пользователь успешно создан!" . "\n" . "Ваш логин - " . $requestContent["login"] . "\n" . "Ваш пароль - " . $requestContent["password"] . "\n" . "Запишите их!";
+                        exit;
+                    } else {
+                        echo "Пользователь с таким логином и/или адресом почты уже существует!";
+                        header('Location: http://' . $_SERVER['HTTP_HOST'] . '/Error403', true, 403);
+                        exit;
                     }
-                    else{
-                        echo "Данный пользователь уже существует!";
-                    }
+                }
 
              })
             ->method('POST');
 
 
-        $index->get('/me', function () use ($app){
-            if (!isset($_SERVER['PHP_AUTH_USER'])) {
-                echo 'Введены неправильные логин и/или пароль.';
-                exit;
-            } else {
-                $repository = new UserRepository();
-                $repository->load();
-                $userTable = new UserModel($repository->GetArray(), $repository->count());
-                $user = $userTable->getUserByBasicAuth();
+        $index->get('/users/me', function () use ($app){
+            $userRepository = new UserRepository();
+            $userTable = new UserService($userRepository->GetArray(), $userRepository->Count());
+            $user = $userTable->GetUserByBasicAuth();
+            if ($user) {
+                $userRepository = new UserRepository();
+                $userTable = new UserService($userRepository->GetArray(), $userRepository->Count());
+                $user = $userTable->GetUserByBasicAuth();
                 return $app['views']($app)->render('Home', 'ShowUserAuth', ['user'=>$user]);
+            }
+            else {
+                echo "Вы не авторизованы!! ";
+                header( 'Location: http://'.$_SERVER['HTTP_HOST'].'/Error403', true, 403 );
+                exit;
             }
         })
             ->method('GET');

@@ -7,7 +7,10 @@ use Silex\Route;
 use Silex\Api\ControllerProviderInterface;
 use Silex\ControllerCollection;
 use Symfony\Request;
-
+use Repository\RedirectRepository;
+use Models\RedirectCounterModel;
+use Repository\ReferenceRepository;
+use Models\ReferenceService;
 class RedirectController implements ControllerProviderInterface {
 
     public function connect(Application $app) {
@@ -15,32 +18,24 @@ class RedirectController implements ControllerProviderInterface {
 
 
         $index->get('/{hash}', function ($hash) use ($app){
-            //$leftReference = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-            try
-            {
-                $refTable= $app['models']($app)->load('ReferenceModel');
-                $refTable->load();
-                $initialRef = $refTable ->FindInitialReference($hash);
+                $refRepository = new ReferenceRepository();
+                $referenceTable = new ReferenceService($refRepository->GetArray(), $refRepository->Count(), $refRepository->GetLastID());
+                $initialRef = $referenceTable ->FindInitialReference($hash);
                 if (!$initialRef['initialRef']) {
+                    echo "Такой ссылки не найдено!";
                     header( 'Location: http://'.$_SERVER['HTTP_HOST'].'/Error404', true, 404 );
                 }
                 else {
-                    $refTable->updateRow($initialRef['refid']);
-                    $refTable->save();
-                    $redirectTable= $app['models']($app)->load('RedirectCounter');
-                    $redirectTable ->load();
-                    $leftReference = $_SERVER['HTTP_REFERER'];
-                    $redirectTable ->createRedirectDate($initialRef['refid'], $leftReference);
-                    $redirectTable ->save();
+                    $referenceTable->UpdateRow($initialRef['refid']);
+                    $refRepository->Save($referenceTable->GetArray(), $referenceTable->Count());
+                    $redirectRepository = new RedirectRepository();
+                    $redirectTable = new RedirectCounterModel($redirectRepository->GetArray(), $redirectRepository->Count());
+                    $leftReference =$_SERVER['HTTP_REFERER'];
+                    $redirectTable ->CreateRedirectDate($initialRef['refid'], $leftReference);
+                    $redirectRepository->Save($redirectTable->GetArray(), $redirectTable->Count());
                     header( 'Location: '.$initialRef['initialRef'], true, 302 );
                 }
                 exit;
-            }
-            catch (Exception $e)
-            {
-                $exceptionText = 'Ошибка перенаправления. '.$e-getMessage();
-            }
-            echo self::render(__METHOD__,'Перенаправление',['exceptionText'=>$exceptionText]);
         })
             ->method('GET');
 

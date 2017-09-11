@@ -1,4 +1,5 @@
 <?php
+namespace Models;
 class ShortenerModel
 {
     private $possible_characters = 'abcdefghijkmnopqrstuvwxyz'.
@@ -13,7 +14,7 @@ class ShortenerModel
         $this->base  = count($this->digits);
     }
 
-    public function translate($number)
+    public function Translate($number)
     {
         $result = '';
         if ($number < 0) {
